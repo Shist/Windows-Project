@@ -95,7 +95,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const lastModalTimeoutId = {
-  link: null
+  link: null,
+  messageLink: null
 };
 const forms = state => {
   const formsList = document.querySelectorAll("form");
@@ -128,6 +129,7 @@ const forms = state => {
       e.preventDefault();
       let statusMsg = document.createElement("div");
       statusMsg.classList.add("status");
+      lastModalTimeoutId.messageLink = statusMsg;
       form.appendChild(statusMsg);
       const formData = new FormData(form);
       if (form.getAttribute("data-calc") === "end") {
@@ -250,6 +252,7 @@ const modals = () => {
 
     const closeModal = () => {
       clearInterval(_forms__WEBPACK_IMPORTED_MODULE_0__.lastModalTimeoutId.link);
+      _forms__WEBPACK_IMPORTED_MODULE_0__.lastModalTimeoutId.messageLink.remove();
       hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed

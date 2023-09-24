@@ -45,6 +45,7 @@ const modals = () => {
 
     const closeModal = () => {
       clearInterval(lastModalTimeoutId.link);
+      lastModalTimeoutId.messageLink.remove();
       hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed

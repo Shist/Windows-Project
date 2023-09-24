@@ -4,6 +4,7 @@ import { hideAllModals } from "./modals";
 
 export const lastModalTimeoutId = {
   link: null,
+  messageLink: null,
 };
 
 const forms = (state) => {
@@ -52,6 +53,7 @@ const forms = (state) => {
 
       let statusMsg = document.createElement("div");
       statusMsg.classList.add("status");
+      lastModalTimeoutId.messageLink = statusMsg;
       form.appendChild(statusMsg);
 
       const formData = new FormData(form);
