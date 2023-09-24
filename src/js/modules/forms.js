@@ -69,7 +69,13 @@ const forms = (state) => {
         })
         .finally(() => {
           for (let key in state) {
-            delete state[key];
+            if (key === "form") {
+              state[key] = 0;
+            } else if (key === "type") {
+              state[key] = "tree";
+            } else {
+              state[key] = null;
+            }
           }
           clearInputs();
           setTimeout(() => {

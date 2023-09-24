@@ -137,7 +137,13 @@ const forms = state => {
         statusMsg.textContent = message.failure;
       }).finally(() => {
         for (let key in state) {
-          delete state[key];
+          if (key === "form") {
+            state[key] = 0;
+          } else if (key === "type") {
+            state[key] = "tree";
+          } else {
+            state[key] = null;
+          }
         }
         clearInputs();
         setTimeout(() => {
@@ -171,20 +177,65 @@ function hideAllModals() {
   });
 }
 const modals = () => {
-  function bindModal(triggerSelector, modalSelector, closeBtnSelector) {
-    let closeClickOverlay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+  function bindModal(modalType, triggerSelector, modalSelector, closeBtnSelector) {
+    let closeClickOverlay = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
     const triggerElements = document.querySelectorAll(triggerSelector);
     const modalWindow = document.querySelector(modalSelector);
     const closeBtn = document.querySelector(closeBtnSelector);
+    const widthInput = document.querySelector("#width");
+    const heightInput = document.querySelector("#height");
+    const profileCheckbox = document.querySelectorAll("[data-profile-checkbox]");
+    const errorMsg = document.createElement("div");
+    errorMsg.setAttribute("data-modal-error", true);
+    errorMsg.classList.add("status");
+    errorMsg.style.marginBottom = "10px";
     triggerElements.forEach(item => {
       item.addEventListener("click", e => {
         if (e.target) {
           e.preventDefault();
         }
-        hideAllModals();
-        modalWindow.style.display = "block";
-        document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
-        // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+        switch (modalType) {
+          case "checkbox_form":
+            if (widthInput.value && heightInput.value) {
+              errorMsg.remove();
+              hideAllModals();
+              modalWindow.style.display = "block";
+              document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
+              // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+            } else {
+              if (!widthInput.value) {
+                errorMsg.textContent = "Пожалуйста, укажите ширину";
+              } else {
+                errorMsg.textContent = "Пожалуйста, укажите высоту";
+              }
+              item.insertAdjacentElement("beforebegin", errorMsg);
+            }
+            break;
+          case "final_form":
+            let checkIsPut = false;
+            profileCheckbox.forEach(checkbox => {
+              if (checkbox.checked) {
+                checkIsPut = true;
+              }
+            });
+            if (checkIsPut) {
+              errorMsg.remove();
+              hideAllModals();
+              modalWindow.style.display = "block";
+              document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
+              // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+            } else {
+              errorMsg.textContent = 'Пожалуйста, выберите профиль остекления ("Холодное" или "Теплое")';
+              item.insertAdjacentElement("beforebegin", errorMsg);
+            }
+            break;
+          default:
+            hideAllModals();
+            modalWindow.style.display = "block";
+            document.body.style.overflow = "hidden";
+          // prevent page scrolling while modal is opened
+          // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+        }
       });
     });
 
@@ -211,11 +262,11 @@ const modals = () => {
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
     }, time);
   }
-  bindModal(".popup_engineer_btn", ".popup_engineer", ".popup_engineer .popup_close");
-  bindModal(".phone_link", ".popup", ".popup .popup_close");
-  bindModal(".popup_calc_btn", ".popup_calc", ".popup_calc_close");
-  bindModal(".popup_calc_button", ".popup_calc_profile", ".popup_calc_profile_close", false);
-  bindModal(".popup_calc_profile_button", ".popup_calc_end", ".popup_calc_end_close", false);
+  bindModal("engineer_form", ".popup_engineer_btn", ".popup_engineer", ".popup_engineer .popup_close");
+  bindModal("call_form", ".phone_link", ".popup", ".popup .popup_close");
+  bindModal("width-height_form", ".popup_calc_btn", ".popup_calc", ".popup_calc_close");
+  bindModal("checkbox_form", ".popup_calc_button", ".popup_calc_profile", ".popup_calc_profile_close", false);
+  bindModal("final_form", ".popup_calc_profile_button", ".popup_calc_end", ".popup_calc_end_close", false);
   showModalByTime(".popup", 60000);
 };
 /* harmony default export */ __webpack_exports__["default"] = (modals);
@@ -14194,7 +14245,13 @@ __webpack_require__.r(__webpack_exports__);
 window.addEventListener("DOMContentLoaded", () => {
   "use strict";
 
-  let calcModalState = {};
+  let calcModalState = {
+    form: 0,
+    width: null,
+    height: null,
+    type: "tree",
+    profile: null
+  };
   (0,_modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__["default"])(calcModalState);
   (0,_modules_modals__WEBPACK_IMPORTED_MODULE_1__["default"])();
   (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".glazing_slider", ".glazing_block", ".glazing_content", "active");

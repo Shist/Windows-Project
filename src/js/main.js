@@ -7,7 +7,13 @@ import changeModalState from "./modules/changeModalState";
 window.addEventListener("DOMContentLoaded", () => {
   "use strict";
 
-  let calcModalState = {};
+  let calcModalState = {
+    form: 0,
+    width: null,
+    height: null,
+    type: "tree",
+    profile: null,
+  };
 
   changeModalState(calcModalState);
   modals();
