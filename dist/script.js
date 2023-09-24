@@ -245,6 +245,7 @@ const modals = () => {
       modalWindow.style.display = "block";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
       // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+      document.body.style.marginRight = `${calcScroll()}px`; // This is needed to avoid moving the page when the vertical scroll is removed
     };
 
     const closeModal = () => {
@@ -253,6 +254,7 @@ const modals = () => {
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
       //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
+      document.body.style.marginRight = "0px"; // This is needed to avoid moving the page when the vertical scroll is removed
     };
 
     triggerElements.forEach(item => {
@@ -307,6 +309,17 @@ const modals = () => {
       document.querySelector(modalSelector).style.display = "block";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
     }, time);
+  }
+  function calcScroll() {
+    const div = document.createElement("div");
+    div.style.width = "50px";
+    div.style.height = "50px";
+    div.style.overflowY = "scroll";
+    div.style.visibility = "hidden";
+    document.body.appendChild(div);
+    const scrollWidth = div.offsetWidth - div.clientWidth;
+    div.remove();
+    return scrollWidth;
   }
   bindModal("engineer_form", ".popup_engineer_btn", ".popup_engineer", ".popup_engineer .popup_close");
   bindModal("call_form", ".phone_link", ".popup", ".popup .popup_close");
