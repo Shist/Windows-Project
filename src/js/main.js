@@ -3,6 +3,7 @@ import modals from "./modules/modals";
 import tabs from "./modules/tabs";
 import forms from "./modules/forms";
 import changeModalState from "./modules/changeModalState";
+import timer from "./modules/timer";
 
 window.addEventListener("DOMContentLoaded", () => {
   "use strict";
@@ -14,6 +15,10 @@ window.addEventListener("DOMContentLoaded", () => {
     type: "tree",
     profile: null,
   };
+
+  const targetFullDate = new Date(); // Today's date (this variable will be changed)
+  targetFullDate.setDate(targetFullDate.getDate() + 3); // Today's date + 3 days
+  targetFullDate.setUTCHours(0, 0, 0, 0); // Today's date + 3 days, but with zero hours, minutes, seconds and milliseconds (UTC)
 
   changeModalState(calcModalState);
   modals();
@@ -32,4 +37,5 @@ window.addEventListener("DOMContentLoaded", () => {
     "inline-block"
   );
   forms(calcModalState);
+  timer(".container1", targetFullDate);
 });

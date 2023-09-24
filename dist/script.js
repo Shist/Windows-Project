@@ -321,6 +321,66 @@ const tabs = function (headerSelector, tabsSelector, contentSelector, activeClas
 
 /***/ }),
 
+/***/ "./src/js/modules/timer.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/timer.js ***!
+  \*********************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const timer = (timerSelector, deadline) => {
+  const addZero = num => {
+    if (num <= 9) {
+      return `0${num}`;
+    } else {
+      return `${num}`;
+    }
+  };
+  const getTimeRemaining = endTime => {
+    const total = Date.parse(endTime) - Date.parse(new Date());
+    const seconds = Math.floor(total / 1000 % 60);
+    const minutes = Math.floor(total / 1000 / 60 % 60);
+    const hours = Math.floor(total / 1000 / 60 / 60 % 24);
+    const days = Math.floor(total / 1000 / 60 / 60 / 24);
+    return {
+      total,
+      days,
+      hours,
+      minutes,
+      seconds
+    };
+  };
+  const setClock = (selector, endTime) => {
+    const timer = document.querySelector(selector);
+    const days = timer.querySelector("#days");
+    const hours = timer.querySelector("#hours");
+    const minutes = timer.querySelector("#minutes");
+    const seconds = timer.querySelector("#seconds");
+    const timeInterval = setInterval(updateClock, 1000);
+    updateClock(); // to update timer instantly
+
+    function updateClock() {
+      const timeObj = getTimeRemaining(endTime);
+      days.textContent = addZero(timeObj.days);
+      hours.textContent = addZero(timeObj.hours);
+      minutes.textContent = addZero(timeObj.minutes);
+      seconds.textContent = addZero(timeObj.seconds);
+      if (timeObj.total <= 0) {
+        days.textContent = "00";
+        hours.textContent = "00";
+        minutes.textContent = "00";
+        seconds.textContent = "00";
+        clearInterval(timeInterval);
+      }
+    }
+  };
+  setClock(timerSelector, deadline);
+};
+/* harmony default export */ __webpack_exports__["default"] = (timer);
+
+/***/ }),
+
 /***/ "./src/js/slider.js":
 /*!**************************!*\
   !*** ./src/js/slider.js ***!
@@ -14236,6 +14296,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState */ "./src/js/modules/changeModalState.js");
+/* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+
 
 
 
@@ -14251,12 +14313,17 @@ window.addEventListener("DOMContentLoaded", () => {
     type: "tree",
     profile: null
   };
+  const targetFullDate = new Date(); // Today's date (this variable will be changed)
+  targetFullDate.setDate(targetFullDate.getDate() + 3); // Today's date + 3 days
+  targetFullDate.setUTCHours(0, 0, 0, 0); // Today's date + 3 days, but with zero hours, minutes, seconds and milliseconds (UTC)
+
   (0,_modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__["default"])(calcModalState);
   (0,_modules_modals__WEBPACK_IMPORTED_MODULE_1__["default"])();
   (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".glazing_slider", ".glazing_block", ".glazing_content", "active");
   (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".decoration_slider", ".no_click", ".decoration_content > div > div", "after_click");
   (0,_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])(".balcon_icons", ".balcon_icons_img", ".big_img > img", "do_image_more", "inline-block");
   (0,_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(calcModalState);
+  (0,_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])(".container1", targetFullDate);
 });
 }();
 /******/ })()
