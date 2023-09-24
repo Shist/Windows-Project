@@ -1,3 +1,5 @@
+import { lastModalTimeoutId } from "./forms";
+
 export function hideAllModals() {
   const allModalWindows = document.querySelectorAll("[data-modal]");
   allModalWindows.forEach((nextModalWindow) => {
@@ -5,7 +7,7 @@ export function hideAllModals() {
   });
 }
 
-export const timeoutId = {
+export const initModalTimeoutId = {
   link: null,
 };
 
@@ -41,6 +43,7 @@ const modals = () => {
     };
 
     const closeModal = () => {
+      clearInterval(lastModalTimeoutId.link);
       hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
@@ -52,7 +55,7 @@ const modals = () => {
         if (e.target) {
           e.preventDefault();
         }
-        clearInterval(timeoutId.link); // Cleaning timeout in case if user already opened some modal
+        clearInterval(initModalTimeoutId.link); // Cleaning timeout in case if user already opened some modal
         switch (modalType) {
           case "checkbox_form":
             if (widthInput.value && heightInput.value) {
@@ -99,7 +102,7 @@ const modals = () => {
   }
 
   function showModalByTime(modalSelector, time) {
-    timeoutId.link = setTimeout(() => {
+    initModalTimeoutId.link = setTimeout(() => {
       document.querySelector(modalSelector).style.display = "block";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
     }, time);

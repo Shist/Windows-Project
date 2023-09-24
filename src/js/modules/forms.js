@@ -2,6 +2,10 @@ import checkNumInputs from "./checkNumInputs";
 import { hideTabContent, showTabContent } from "./tabs";
 import { hideAllModals } from "./modals";
 
+export const lastModalTimeoutId = {
+  link: null,
+};
+
 const forms = (state) => {
   const formsList = document.querySelectorAll("form");
   const inputsList = document.querySelectorAll("input");
@@ -78,7 +82,7 @@ const forms = (state) => {
             }
           }
           clearInputs();
-          setTimeout(() => {
+          lastModalTimeoutId.link = setTimeout(() => {
             statusMsg.remove();
             hideAllModals();
             document.body.style.overflow = "";

@@ -85,12 +85,18 @@ const checkNumInputs = selector => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   lastModalTimeoutId: function() { return /* binding */ lastModalTimeoutId; }
+/* harmony export */ });
 /* harmony import */ var _checkNumInputs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./checkNumInputs */ "./src/js/modules/checkNumInputs.js");
 /* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tabs */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modals__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modals */ "./src/js/modules/modals.js");
 
 
 
+const lastModalTimeoutId = {
+  link: null
+};
 const forms = state => {
   const formsList = document.querySelectorAll("form");
   const inputsList = document.querySelectorAll("input");
@@ -146,7 +152,7 @@ const forms = state => {
           }
         }
         clearInputs();
-        setTimeout(() => {
+        lastModalTimeoutId.link = setTimeout(() => {
           statusMsg.remove();
           (0,_modals__WEBPACK_IMPORTED_MODULE_2__.hideAllModals)();
           document.body.style.overflow = "";
@@ -169,15 +175,17 @@ const forms = state => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   hideAllModals: function() { return /* binding */ hideAllModals; },
-/* harmony export */   timeoutId: function() { return /* binding */ timeoutId; }
+/* harmony export */   initModalTimeoutId: function() { return /* binding */ initModalTimeoutId; }
 /* harmony export */ });
+/* harmony import */ var _forms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./forms */ "./src/js/modules/forms.js");
+
 function hideAllModals() {
   const allModalWindows = document.querySelectorAll("[data-modal]");
   allModalWindows.forEach(nextModalWindow => {
     nextModalWindow.style.display = "none";
   });
 }
-const timeoutId = {
+const initModalTimeoutId = {
   link: null
 };
 const modals = () => {
@@ -202,6 +210,7 @@ const modals = () => {
     };
 
     const closeModal = () => {
+      clearInterval(_forms__WEBPACK_IMPORTED_MODULE_0__.lastModalTimeoutId.link);
       hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
@@ -213,7 +222,7 @@ const modals = () => {
         if (e.target) {
           e.preventDefault();
         }
-        clearInterval(timeoutId.link); // Cleaning timeout in case if user already opened some modal
+        clearInterval(initModalTimeoutId.link); // Cleaning timeout in case if user already opened some modal
         switch (modalType) {
           case "checkbox_form":
             if (widthInput.value && heightInput.value) {
@@ -256,7 +265,7 @@ const modals = () => {
     });
   }
   function showModalByTime(modalSelector, time) {
-    timeoutId.link = setTimeout(() => {
+    initModalTimeoutId.link = setTimeout(() => {
       document.querySelector(modalSelector).style.display = "block";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
     }, time);
