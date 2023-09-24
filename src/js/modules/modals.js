@@ -5,6 +5,10 @@ export function hideAllModals() {
   });
 }
 
+export const timeoutId = {
+  link: null,
+};
+
 const modals = () => {
   function bindModal(
     modalType,
@@ -28,19 +32,31 @@ const modals = () => {
     errorMsg.classList.add("status");
     errorMsg.style.marginBottom = "10px";
 
+    const setModal = () => {
+      errorMsg.remove();
+      hideAllModals();
+      modalWindow.style.display = "block";
+      document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
+      // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+    };
+
+    const closeModal = () => {
+      hideAllModals();
+      modalWindow.style.display = "none";
+      document.body.style.overflow = ""; // make page scrolling again after modal is closed
+      //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
+    };
+
     triggerElements.forEach((item) => {
       item.addEventListener("click", (e) => {
         if (e.target) {
           e.preventDefault();
         }
+        clearInterval(timeoutId.link); // Cleaning timeout in case if user already opened some modal
         switch (modalType) {
           case "checkbox_form":
             if (widthInput.value && heightInput.value) {
-              errorMsg.remove();
-              hideAllModals();
-              modalWindow.style.display = "block";
-              document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
-              // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+              setModal();
             } else {
               if (!widthInput.value) {
                 errorMsg.textContent = "Пожалуйста, укажите ширину";
@@ -58,11 +74,7 @@ const modals = () => {
               }
             });
             if (checkIsPut) {
-              errorMsg.remove();
-              hideAllModals();
-              modalWindow.style.display = "block";
-              document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
-              // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+              setModal();
             } else {
               errorMsg.textContent =
                 'Пожалуйста, выберите профиль остекления ("Холодное" или "Теплое")';
@@ -70,33 +82,24 @@ const modals = () => {
             }
             break;
           default:
-            hideAllModals();
-            modalWindow.style.display = "block";
-            document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
-          // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
+            setModal();
         }
       });
     });
 
     closeBtn.addEventListener("click", () => {
-      hideAllModals();
-      modalWindow.style.display = "none";
-      document.body.style.overflow = ""; // make page scrolling again after modal is closed
-      //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
+      closeModal();
     });
 
     modalWindow.addEventListener("click", (e) => {
       if (e.target === modalWindow && closeClickOverlay) {
-        hideAllModals();
-        modalWindow.style.display = "none";
-        document.body.style.overflow = ""; // make page scrolling again after modal is closed
-        // document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
+        closeModal();
       }
     });
   }
 
   function showModalByTime(modalSelector, time) {
-    setTimeout(() => {
+    timeoutId.link = setTimeout(() => {
       document.querySelector(modalSelector).style.display = "block";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
     }, time);
