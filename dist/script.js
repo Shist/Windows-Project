@@ -175,6 +175,12 @@ const forms = state => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   imageOpenStatus: function() { return /* binding */ imageOpenStatus; }
+/* harmony export */ });
+const imageOpenStatus = {
+  opened: false
+};
 const images = () => {
   const imgPopup = document.createElement("div");
   const workSection = document.querySelector(".works");
@@ -252,7 +258,9 @@ const modals = () => {
 
     const closeModal = () => {
       clearInterval(_forms__WEBPACK_IMPORTED_MODULE_0__.lastModalTimeoutId.link);
-      _forms__WEBPACK_IMPORTED_MODULE_0__.lastModalTimeoutId.messageLink.remove();
+      if (_forms__WEBPACK_IMPORTED_MODULE_0__.lastModalTimeoutId.messageLink) {
+        _forms__WEBPACK_IMPORTED_MODULE_0__.lastModalTimeoutId.messageLink.remove();
+      }
       hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
@@ -329,7 +337,7 @@ const modals = () => {
   bindModal("width-height_form", ".popup_calc_btn", ".popup_calc", ".popup_calc_close");
   bindModal("checkbox_form", ".popup_calc_button", ".popup_calc_profile", ".popup_calc_profile_close", false);
   bindModal("final_form", ".popup_calc_profile_button", ".popup_calc_end", ".popup_calc_end_close", false);
-  showModalByTime("#popup-request-call", 60000);
+  showModalByTime("#popup-request-call", 5000);
 };
 /* harmony default export */ __webpack_exports__["default"] = (modals);
 

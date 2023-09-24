@@ -45,7 +45,9 @@ const modals = () => {
 
     const closeModal = () => {
       clearInterval(lastModalTimeoutId.link);
-      lastModalTimeoutId.messageLink.remove();
+      if (lastModalTimeoutId.messageLink) {
+        lastModalTimeoutId.messageLink.remove();
+      }
       hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
@@ -153,7 +155,7 @@ const modals = () => {
     ".popup_calc_end_close",
     false
   );
-  showModalByTime("#popup-request-call", 60000);
+  showModalByTime("#popup-request-call", 5000);
 };
 
 export default modals;

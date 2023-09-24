@@ -1,3 +1,7 @@
+export const imageOpenStatus = {
+  opened: false,
+};
+
 const images = () => {
   const imgPopup = document.createElement("div");
   const workSection = document.querySelector(".works");
