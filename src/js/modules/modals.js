@@ -152,7 +152,7 @@ const modals = () => {
     ".popup_calc_end_close",
     false
   );
-  showModalByTime(".popup", 60000);
+  showModalByTime("#popup-request-call", 60000);
 };
 
 export default modals;
