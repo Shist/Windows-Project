@@ -68,7 +68,9 @@ const forms = (state) => {
           statusMsg.textContent = message.failure;
         })
         .finally(() => {
-          state = {};
+          for (let key in state) {
+            delete state[key];
+          }
           clearInputs();
           setTimeout(() => {
             statusMsg.remove();
