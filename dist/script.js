@@ -129,6 +129,10 @@ const forms = state => {
         clearInputs();
         setTimeout(() => {
           statusMsg.remove();
+          document.querySelectorAll("[data-modal]").forEach(nextModalWindow => {
+            nextModalWindow.style.display = "none";
+          });
+          document.body.style.overflow = "";
         }, 5000);
       });
     });
