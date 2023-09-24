@@ -1,8 +1,12 @@
 import checkNumInputs from "./checkNumInputs";
+import { hideTabContent, showTabContent } from "./tabs";
+import { hideAllModals } from "./modals";
 
 const forms = (state) => {
   const formsList = document.querySelectorAll("form");
   const inputsList = document.querySelectorAll("input");
+  const selectType = document.querySelector("#view_type");
+  const profileCheckbox = document.querySelectorAll("[data-profile-checkbox]");
 
   checkNumInputs('input[name="user_phone"]');
 
@@ -22,7 +26,20 @@ const forms = (state) => {
   };
 
   const clearInputs = () => {
+    hideTabContent(
+      document.querySelectorAll(".big_img > img"),
+      document.querySelectorAll(".balcon_icons_img"),
+      "do_image_more"
+    );
+    showTabContent(
+      document.querySelectorAll(".big_img > img"),
+      document.querySelectorAll(".balcon_icons_img"),
+      "do_image_more",
+      "inline-block"
+    );
     inputsList.forEach((input) => (input.value = ""));
+    selectType.value = "tree";
+    profileCheckbox.forEach((checkbox) => (checkbox.checked = false));
   };
 
   formsList.forEach((form) => {
@@ -51,14 +68,11 @@ const forms = (state) => {
           statusMsg.textContent = message.failure;
         })
         .finally(() => {
+          state = {};
           clearInputs();
           setTimeout(() => {
             statusMsg.remove();
-            document
-              .querySelectorAll("[data-modal]")
-              .forEach((nextModalWindow) => {
-                nextModalWindow.style.display = "none";
-              });
+            hideAllModals();
             document.body.style.overflow = "";
           }, 5000);
         });

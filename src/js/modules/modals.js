@@ -1,3 +1,10 @@
+export function hideAllModals() {
+  const allModalWindows = document.querySelectorAll("[data-modal]");
+  allModalWindows.forEach((nextModalWindow) => {
+    nextModalWindow.style.display = "none";
+  });
+}
+
 const modals = () => {
   function bindModal(
     triggerSelector,
@@ -8,18 +15,13 @@ const modals = () => {
     const triggerElements = document.querySelectorAll(triggerSelector);
     const modalWindow = document.querySelector(modalSelector);
     const closeBtn = document.querySelector(closeBtnSelector);
-    const allModalWindows = document.querySelectorAll("[data-modal]");
 
     triggerElements.forEach((item) => {
       item.addEventListener("click", (e) => {
         if (e.target) {
           e.preventDefault();
         }
-
-        allModalWindows.forEach((nextModalWindow) => {
-          nextModalWindow.style.display = "none";
-        });
-
+        hideAllModals();
         modalWindow.style.display = "block";
         document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
         // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
@@ -27,9 +29,7 @@ const modals = () => {
     });
 
     closeBtn.addEventListener("click", () => {
-      allModalWindows.forEach((nextModalWindow) => {
-        nextModalWindow.style.display = "none";
-      });
+      hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
       //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
@@ -37,9 +37,7 @@ const modals = () => {
 
     modalWindow.addEventListener("click", (e) => {
       if (e.target === modalWindow && closeClickOverlay) {
-        allModalWindows.forEach((nextModalWindow) => {
-          nextModalWindow.style.display = "none";
-        });
+        hideAllModals();
         modalWindow.style.display = "none";
         document.body.style.overflow = ""; // make page scrolling again after modal is closed
         // document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)

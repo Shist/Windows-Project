@@ -1,3 +1,23 @@
+export function hideTabContent(content, tabs, activeClass) {
+  content.forEach((item) => {
+    item.style.display = "none";
+  });
+  tabs.forEach((item) => {
+    item.classList.remove(activeClass);
+  });
+}
+
+export function showTabContent(
+  content,
+  tabs,
+  activeClass,
+  display = "block",
+  index = 0
+) {
+  content[index].style.display = display;
+  tabs[index].classList.add(activeClass);
+}
+
 const tabs = (
   headerSelector,
   tabsSelector,
@@ -9,22 +29,8 @@ const tabs = (
   const tabs = document.querySelectorAll(tabsSelector);
   const content = document.querySelectorAll(contentSelector);
 
-  const hideTabContent = () => {
-    content.forEach((item) => {
-      item.style.display = "none";
-    });
-    tabs.forEach((item) => {
-      item.classList.remove(activeClass);
-    });
-  };
-
-  const showTabContent = (index = 0) => {
-    content[index].style.display = display;
-    tabs[index].classList.add(activeClass);
-  };
-
-  hideTabContent();
-  showTabContent();
+  hideTabContent(content, tabs, activeClass);
+  showTabContent(content, tabs, activeClass, display);
 
   header.addEventListener("click", (e) => {
     const target = e.target;
@@ -35,8 +41,8 @@ const tabs = (
     ) {
       tabs.forEach((item, index) => {
         if (target === item || target.parentNode === item) {
-          hideTabContent();
-          showTabContent(index);
+          hideTabContent(content, tabs, activeClass);
+          showTabContent(content, tabs, activeClass, display, index);
         }
       });
     }

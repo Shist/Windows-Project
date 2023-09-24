@@ -86,10 +86,16 @@ const checkNumInputs = selector => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _checkNumInputs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./checkNumInputs */ "./src/js/modules/checkNumInputs.js");
+/* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tabs */ "./src/js/modules/tabs.js");
+/* harmony import */ var _modals__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modals */ "./src/js/modules/modals.js");
+
+
 
 const forms = state => {
   const formsList = document.querySelectorAll("form");
   const inputsList = document.querySelectorAll("input");
+  const selectType = document.querySelector("#view_type");
+  const profileCheckbox = document.querySelectorAll("[data-profile-checkbox]");
   (0,_checkNumInputs__WEBPACK_IMPORTED_MODULE_0__["default"])('input[name="user_phone"]');
   const message = {
     loading: "Загрузка",
@@ -105,7 +111,11 @@ const forms = state => {
     return await result.text();
   };
   const clearInputs = () => {
+    (0,_tabs__WEBPACK_IMPORTED_MODULE_1__.hideTabContent)(document.querySelectorAll(".big_img > img"), document.querySelectorAll(".balcon_icons_img"), "do_image_more");
+    (0,_tabs__WEBPACK_IMPORTED_MODULE_1__.showTabContent)(document.querySelectorAll(".big_img > img"), document.querySelectorAll(".balcon_icons_img"), "do_image_more", "inline-block");
     inputsList.forEach(input => input.value = "");
+    selectType.value = "tree";
+    profileCheckbox.forEach(checkbox => checkbox.checked = false);
   };
   formsList.forEach(form => {
     form.addEventListener("submit", e => {
@@ -126,12 +136,11 @@ const forms = state => {
       }).catch(() => {
         statusMsg.textContent = message.failure;
       }).finally(() => {
+        state = {};
         clearInputs();
         setTimeout(() => {
           statusMsg.remove();
-          document.querySelectorAll("[data-modal]").forEach(nextModalWindow => {
-            nextModalWindow.style.display = "none";
-          });
+          (0,_modals__WEBPACK_IMPORTED_MODULE_2__.hideAllModals)();
           document.body.style.overflow = "";
         }, 5000);
       });
@@ -150,21 +159,27 @@ const forms = state => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   hideAllModals: function() { return /* binding */ hideAllModals; }
+/* harmony export */ });
+function hideAllModals() {
+  const allModalWindows = document.querySelectorAll("[data-modal]");
+  allModalWindows.forEach(nextModalWindow => {
+    nextModalWindow.style.display = "none";
+  });
+}
 const modals = () => {
   function bindModal(triggerSelector, modalSelector, closeBtnSelector) {
     let closeClickOverlay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
     const triggerElements = document.querySelectorAll(triggerSelector);
     const modalWindow = document.querySelector(modalSelector);
     const closeBtn = document.querySelector(closeBtnSelector);
-    const allModalWindows = document.querySelectorAll("[data-modal]");
     triggerElements.forEach(item => {
       item.addEventListener("click", e => {
         if (e.target) {
           e.preventDefault();
         }
-        allModalWindows.forEach(nextModalWindow => {
-          nextModalWindow.style.display = "none";
-        });
+        hideAllModals();
         modalWindow.style.display = "block";
         document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
         // document.body.classList.add("modal-open"); // Alternative to upper line (bootstrap class)
@@ -172,9 +187,7 @@ const modals = () => {
     });
 
     closeBtn.addEventListener("click", () => {
-      allModalWindows.forEach(nextModalWindow => {
-        nextModalWindow.style.display = "none";
-      });
+      hideAllModals();
       modalWindow.style.display = "none";
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
       //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
@@ -182,9 +195,7 @@ const modals = () => {
 
     modalWindow.addEventListener("click", e => {
       if (e.target === modalWindow && closeClickOverlay) {
-        allModalWindows.forEach(nextModalWindow => {
-          nextModalWindow.style.display = "none";
-        });
+        hideAllModals();
         modalWindow.style.display = "none";
         document.body.style.overflow = ""; // make page scrolling again after modal is closed
         // document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
@@ -217,33 +228,38 @@ const modals = () => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   hideTabContent: function() { return /* binding */ hideTabContent; },
+/* harmony export */   showTabContent: function() { return /* binding */ showTabContent; }
+/* harmony export */ });
+function hideTabContent(content, tabs, activeClass) {
+  content.forEach(item => {
+    item.style.display = "none";
+  });
+  tabs.forEach(item => {
+    item.classList.remove(activeClass);
+  });
+}
+function showTabContent(content, tabs, activeClass) {
+  let display = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "block";
+  let index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+  content[index].style.display = display;
+  tabs[index].classList.add(activeClass);
+}
 const tabs = function (headerSelector, tabsSelector, contentSelector, activeClass) {
   let display = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : "block";
   const header = document.querySelector(headerSelector);
   const tabs = document.querySelectorAll(tabsSelector);
   const content = document.querySelectorAll(contentSelector);
-  const hideTabContent = () => {
-    content.forEach(item => {
-      item.style.display = "none";
-    });
-    tabs.forEach(item => {
-      item.classList.remove(activeClass);
-    });
-  };
-  const showTabContent = function () {
-    let index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    content[index].style.display = display;
-    tabs[index].classList.add(activeClass);
-  };
-  hideTabContent();
-  showTabContent();
+  hideTabContent(content, tabs, activeClass);
+  showTabContent(content, tabs, activeClass, display);
   header.addEventListener("click", e => {
     const target = e.target;
     if (target && (target.classList.contains(tabsSelector.replace(/\./, "")) || target.parentNode.classList.contains(tabsSelector.replace(/\./, "")))) {
       tabs.forEach((item, index) => {
         if (target === item || target.parentNode === item) {
-          hideTabContent();
-          showTabContent(index);
+          hideTabContent(content, tabs, activeClass);
+          showTabContent(content, tabs, activeClass, display, index);
         }
       });
     }
