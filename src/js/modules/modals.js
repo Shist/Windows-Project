@@ -1,10 +1,26 @@
 import { lastModalTimeoutId } from "./forms";
+import { imageOpenStatus } from "./images";
 
 export function hideAllModals() {
   const allModalWindows = document.querySelectorAll("[data-modal]");
   allModalWindows.forEach((nextModalWindow) => {
     nextModalWindow.style.display = "none";
   });
+}
+
+export function calcScroll() {
+  const div = document.createElement("div");
+
+  div.style.width = "50px";
+  div.style.height = "50px";
+  div.style.overflowY = "scroll";
+  div.style.visibility = "hidden";
+
+  document.body.appendChild(div);
+  const scrollWidth = div.offsetWidth - div.clientWidth;
+  div.remove();
+
+  return scrollWidth;
 }
 
 export const initModalTimeoutId = {
@@ -50,9 +66,11 @@ const modals = () => {
       }
       hideAllModals();
       modalWindow.style.display = "none";
-      document.body.style.overflow = ""; // make page scrolling again after modal is closed
-      //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
-      document.body.style.marginRight = "0px"; // This is needed to avoid moving the page when the vertical scroll is removed
+      if (!imageOpenStatus.opened) {
+        document.body.style.overflow = ""; // make page scrolling again after modal is closed
+        //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
+        document.body.style.marginRight = "0px"; // This is needed to avoid moving the page when the vertical scroll is removed
+      }
     };
 
     triggerElements.forEach((item) => {
@@ -110,22 +128,10 @@ const modals = () => {
     initModalTimeoutId.link = setTimeout(() => {
       document.querySelector(modalSelector).style.display = "block";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
+      if (!imageOpenStatus.opened) {
+        document.body.style.marginRight = `${calcScroll()}px`; // This is needed to avoid moving the page when the vertical scroll is removed
+      }
     }, time);
-  }
-
-  function calcScroll() {
-    const div = document.createElement("div");
-
-    div.style.width = "50px";
-    div.style.height = "50px";
-    div.style.overflowY = "scroll";
-    div.style.visibility = "hidden";
-
-    document.body.appendChild(div);
-    const scrollWidth = div.offsetWidth - div.clientWidth;
-    div.remove();
-
-    return scrollWidth;
   }
 
   bindModal(
@@ -155,7 +161,7 @@ const modals = () => {
     ".popup_calc_end_close",
     false
   );
-  showModalByTime("#popup-request-call", 5000);
+  showModalByTime("#popup-request-call", 60000);
 };
 
 export default modals;

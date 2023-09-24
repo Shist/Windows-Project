@@ -1,6 +1,7 @@
 import checkNumInputs from "./checkNumInputs";
 import { hideTabContent, showTabContent } from "./tabs";
 import { hideAllModals } from "./modals";
+import { imageOpenStatus } from "./images";
 
 export const lastModalTimeoutId = {
   link: null,
@@ -87,7 +88,9 @@ const forms = (state) => {
           lastModalTimeoutId.link = setTimeout(() => {
             statusMsg.remove();
             hideAllModals();
-            document.body.style.overflow = "";
+            if (!imageOpenStatus.opened) {
+              document.body.style.overflow = ""; // make page scrolling again after modal is closed
+            }
           }, 5000);
         });
     });

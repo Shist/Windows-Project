@@ -91,6 +91,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _checkNumInputs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./checkNumInputs */ "./src/js/modules/checkNumInputs.js");
 /* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./tabs */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modals__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modals */ "./src/js/modules/modals.js");
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./images */ "./src/js/modules/images.js");
+
 
 
 
@@ -157,7 +159,9 @@ const forms = state => {
         lastModalTimeoutId.link = setTimeout(() => {
           statusMsg.remove();
           (0,_modals__WEBPACK_IMPORTED_MODULE_2__.hideAllModals)();
-          document.body.style.overflow = "";
+          if (!_images__WEBPACK_IMPORTED_MODULE_3__.imageOpenStatus.opened) {
+            document.body.style.overflow = ""; // make page scrolling again after modal is closed
+          }
         }, 5000);
       });
     });
@@ -178,6 +182,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   imageOpenStatus: function() { return /* binding */ imageOpenStatus; }
 /* harmony export */ });
+/* harmony import */ var _modals__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modals */ "./src/js/modules/modals.js");
+
 const imageOpenStatus = {
   opened: false
 };
@@ -196,13 +202,17 @@ const images = () => {
     e.preventDefault();
     const target = e.target;
     if (target && target.classList.contains("preview")) {
+      imageOpenStatus.opened = true;
       imgPopup.style.display = "flex";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
+      document.body.style.marginRight = `${(0,_modals__WEBPACK_IMPORTED_MODULE_0__.calcScroll)()}px`; // This is needed to avoid moving the page when the vertical scroll is removed
       const path = target.parentNode.getAttribute("href");
       bigImage.setAttribute("src", path);
     }
     if (target && target.matches("div.popup")) {
+      imageOpenStatus.opened = false;
       document.body.style.overflow = ""; // make page scrolling again after modal is closed
+      document.body.style.marginRight = "0px"; // This is needed to avoid moving the page when the vertical scroll is removed
       imgPopup.style.display = "none";
     }
   });
@@ -220,16 +230,30 @@ const images = () => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   calcScroll: function() { return /* binding */ calcScroll; },
 /* harmony export */   hideAllModals: function() { return /* binding */ hideAllModals; },
 /* harmony export */   initModalTimeoutId: function() { return /* binding */ initModalTimeoutId; }
 /* harmony export */ });
 /* harmony import */ var _forms__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./forms */ "./src/js/modules/forms.js");
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./images */ "./src/js/modules/images.js");
+
 
 function hideAllModals() {
   const allModalWindows = document.querySelectorAll("[data-modal]");
   allModalWindows.forEach(nextModalWindow => {
     nextModalWindow.style.display = "none";
   });
+}
+function calcScroll() {
+  const div = document.createElement("div");
+  div.style.width = "50px";
+  div.style.height = "50px";
+  div.style.overflowY = "scroll";
+  div.style.visibility = "hidden";
+  document.body.appendChild(div);
+  const scrollWidth = div.offsetWidth - div.clientWidth;
+  div.remove();
+  return scrollWidth;
 }
 const initModalTimeoutId = {
   link: null
@@ -263,9 +287,11 @@ const modals = () => {
       }
       hideAllModals();
       modalWindow.style.display = "none";
-      document.body.style.overflow = ""; // make page scrolling again after modal is closed
-      //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
-      document.body.style.marginRight = "0px"; // This is needed to avoid moving the page when the vertical scroll is removed
+      if (!_images__WEBPACK_IMPORTED_MODULE_1__.imageOpenStatus.opened) {
+        document.body.style.overflow = ""; // make page scrolling again after modal is closed
+        //   document.body.classList.remove("modal-open"); // Alternative to upper line (bootstrap class)
+        document.body.style.marginRight = "0px"; // This is needed to avoid moving the page when the vertical scroll is removed
+      }
     };
 
     triggerElements.forEach(item => {
@@ -319,25 +345,17 @@ const modals = () => {
     initModalTimeoutId.link = setTimeout(() => {
       document.querySelector(modalSelector).style.display = "block";
       document.body.style.overflow = "hidden"; // prevent page scrolling while modal is opened
+      if (!_images__WEBPACK_IMPORTED_MODULE_1__.imageOpenStatus.opened) {
+        document.body.style.marginRight = `${calcScroll()}px`; // This is needed to avoid moving the page when the vertical scroll is removed
+      }
     }, time);
-  }
-  function calcScroll() {
-    const div = document.createElement("div");
-    div.style.width = "50px";
-    div.style.height = "50px";
-    div.style.overflowY = "scroll";
-    div.style.visibility = "hidden";
-    document.body.appendChild(div);
-    const scrollWidth = div.offsetWidth - div.clientWidth;
-    div.remove();
-    return scrollWidth;
   }
   bindModal("engineer_form", ".popup_engineer_btn", ".popup_engineer", ".popup_engineer .popup_close");
   bindModal("call_form", ".phone_link", ".popup", ".popup .popup_close");
   bindModal("width-height_form", ".popup_calc_btn", ".popup_calc", ".popup_calc_close");
   bindModal("checkbox_form", ".popup_calc_button", ".popup_calc_profile", ".popup_calc_profile_close", false);
   bindModal("final_form", ".popup_calc_profile_button", ".popup_calc_end", ".popup_calc_end_close", false);
-  showModalByTime("#popup-request-call", 5000);
+  showModalByTime("#popup-request-call", 60000);
 };
 /* harmony default export */ __webpack_exports__["default"] = (modals);
 
